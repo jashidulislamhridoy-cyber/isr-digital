@@ -145,6 +145,10 @@ document.querySelectorAll("[data-tabgroup]").forEach(function (group) {
   }
   tabs.forEach(t => t.addEventListener("click", () => render(t.dataset.platform)));
   render(tabs[0].dataset.platform);
+  window.addEventListener("portfolio-ready", function () {
+    const active = group.querySelector(".tab.active");
+    render(active ? active.dataset.platform : tabs[0].dataset.platform);
+  });
 });
 
 /* ===== Contact form ===== */
