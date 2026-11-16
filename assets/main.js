@@ -129,6 +129,8 @@ document.querySelectorAll("[data-tabgroup]").forEach(function (group) {
       const meta = document.createElement("span"); meta.textContent = [it.client, it.metric].filter(Boolean).join(" · ");
       cap.appendChild(t); cap.appendChild(meta);
       d.appendChild(img); d.appendChild(cap);
+      d.style.cursor = "zoom-in";
+      d.addEventListener("click", function () { openLightbox(it); });
       holder.appendChild(d);
     });
     for (let i = 1; i <= (items.length ? 0 : count); i++) {
@@ -201,3 +203,40 @@ document.querySelectorAll("[data-tabgroup]").forEach(function (group) {
     card.style.setProperty("--rx", "0deg");
   });
 })();
+
+/* ===== Lightbox for Recent Work images ===== */
+function openLightbox(it) {
+  const box = document.createElement("div");
+  box.setAttribute("role", "dialog");
+  box.setAttribute("aria-label", it.title || "Image");
+  box.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:10000;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;cursor:zoom-out";
+  const img = document.createElement("img");
+  img.src = it.image; img.alt = it.title || "";
+  img.style.cssText = "max-width:min(1200px,94vw);max-height:80vh;width:auto;height:auto;border-radius:10px;box-shadow:0 20px 60px rgba(0,0,0,.6)";
+  const cap = document.createElement("div");
+  cap.style.cssText = "margin-top:16px;text-align:center;color:#f4f4f5;font-family:Inter,system-ui,sans-serif";
+  const t = document.createElement("div");
+  t.textContent = it.title || "";
+  t.style.cssText = "font-size:18px;font-weight:600";
+  const meta = document.createElement("div");
+  meta.textContent = [it.client, it.metric].filter(Boolean).join(" \u00b7 ");
+  meta.style.cssText = "font-size:14px;color:#c9a54a;margin-top:4px";
+  cap.appendChild(t); cap.appendChild(meta);
+  if (it.link) {
+    const a = document.createElement("a");
+    a.href = it.link; a.target = "_blank"; a.rel = "noopener";
+    a.textContent = "Open link \u2192";
+    a.style.cssText = "display:inline-block;margin-top:10px;color:#d4af37;font-size:14px";
+    a.addEventListener("click", function (e) { e.stopPropagation(); });
+    cap.appendChild(a);
+  }
+  const close = document.createElement("button");
+  close.type = "button"; close.textContent = "\u00d7"; close.setAttribute("aria-label", "Close");
+  close.style.cssText = "position:absolute;top:16px;right:20px;background:none;border:0;color:#fff;font-size:40px;line-height:1;cursor:pointer";
+  box.appendChild(img); box.appendChild(cap); box.appendChild(close);
+  function done() { box.remove(); document.removeEventListener("keydown", onKey); }
+  function onKey(e) { if (e.key === "Escape") done(); }
+  box.addEventListener("click", done);
+  document.addEventListener("keydown", onKey);
+  document.body.appendChild(box);
+}
