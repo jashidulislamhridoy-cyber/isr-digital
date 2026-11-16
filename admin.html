@@ -83,6 +83,16 @@
       </section>
     </div>
   </section>
+    <section class="panel" style="margin-top:22px">
+      <h2>Social media links</h2>
+      <p class="msg" style="margin:0 0 6px">Paste the full link. Leave empty to hide that icon on the website.</p>
+      <label for="s_facebook">Facebook</label><input type="url" id="s_facebook" placeholder="https://facebook.com/...">
+      <label for="s_instagram">Instagram</label><input type="url" id="s_instagram" placeholder="https://instagram.com/...">
+      <label for="s_youtube">YouTube</label><input type="url" id="s_youtube" placeholder="https://youtube.com/...">
+      <label for="s_linkedin">LinkedIn</label><input type="url" id="s_linkedin" placeholder="https://linkedin.com/...">
+      <button class="btn" id="saveSocial" type="button" style="width:auto;padding:11px 22px">Save links</button>
+      <div class="msg" id="socialMsg"></div>
+    </section>
 </main>
 
 <script src="assets/config.js"></script>
@@ -107,7 +117,7 @@
   function showApp(email) {
     $("loginView").style.display = "none"; $("appView").style.display = "block";
     $("whoBox").style.display = "flex"; $("who").textContent = email;
-    load();
+    load(); loadSocial();
   }
 
   $("loginBtn").onclick = async function () {
@@ -224,6 +234,19 @@
     $("file").value = ""; imageBlob = null;
     msg("addMsg", "Added.");
     load();
+  };
+
+
+  var SOCIAL = ["facebook", "instagram", "youtube", "linkedin"];
+  async function loadSocial() {
+    var r = await sb.from("site_settings").select("key,value");
+    if (r.error) { msg("socialMsg", "Could not load links: " + r.error.message, true); return; }
+    r.data.forEach(function (row) { var el = $("s_" + row.key); if (el) el.value = row.value || ""; });
+  }
+  $("saveSocial").onclick = async function () {
+    var rows = SOCIAL.map(function (k) { return { key: k, value: $("s_" + k).value.trim() }; });
+    var r = await sb.from("site_settings").upsert(rows);
+    msg("socialMsg", r.error ? "Save failed: " + r.error.message : "Saved. The website will show these links.", !!r.error);
   };
 
   sb.auth.onAuthStateChange(function (event) { if (event === "SIGNED_OUT") showLogin(); });

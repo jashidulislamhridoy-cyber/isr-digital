@@ -18,6 +18,15 @@
         window.ISR_PORTFOLIO = out;
         window.dispatchEvent(new Event("portfolio-ready"));
       });
+    sb.from("site_settings").select("key,value").then(function (r) {
+      if (r.error) { console.error(r.error); return; }
+      var map = {};
+      r.data.forEach(function (row) { map[row.key] = row.value; });
+      document.querySelectorAll("[data-social]").forEach(function (a) {
+        var v = (map[a.dataset.social] || "").trim();
+        if (v) { a.href = v; a.target = "_blank"; a.rel = "noopener"; } else { a.style.display = "none"; }
+      });
+    });
   };
   document.head.appendChild(s);
 })();
