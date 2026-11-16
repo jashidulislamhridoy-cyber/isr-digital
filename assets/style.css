@@ -236,20 +236,26 @@ p{margin:0}
 @media (max-width:680px){.portrait3d{width:min(300px,78vw);display:block}.p-chip{font-size:10px;padding:8px 11px}.p-chip.c1{right:-2%}.p-chip.c2{left:-2%}.about-points{grid-template-columns:1fr}.arch .badge{right:0}}
 @media (prefers-reduced-motion:reduce){.p-card{animation:none}}
 
-/* ===== Mobile: show all main links in a row under the logo ===== */
+/* ===== Mobile: centered logo, all main links in one centered row ===== */
 @media (max-width: 900px) {
-  .site-header .header-inner { flex-wrap: wrap; row-gap: 10px; }
+  .site-header .header-inner {
+    flex-direction: column;
+    height: auto;
+    padding: 12px 0 10px;
+    gap: 10px;
+  }
+  .site-header .brand { justify-content: center; }
+  .site-header .brand img { height: 40px !important; }
   .site-header .nav-links {
     display: flex !important;
-    order: 3;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 8px 16px;
+    font-size: 13px;
     width: 100%;
-    gap: 18px;
-    overflow-x: auto;
-    white-space: nowrap;
-    padding-bottom: 4px;
-    scrollbar-width: none;
+    overflow: visible;
   }
-  .site-header .nav-links::-webkit-scrollbar { display: none; }
+  .site-header .nav-links a { padding: 4px 0; }
   .site-header .menu-btn,
   .site-header .nav-cta,
   .site-header .mobile-nav { display: none !important; }
